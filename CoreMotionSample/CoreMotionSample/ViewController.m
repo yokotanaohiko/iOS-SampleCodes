@@ -8,11 +8,19 @@
 
 #import <CoreMotion/CoreMotion.h>
 #import "ViewController.h"
+#import "IntegralCalc.h"
 
 @interface ViewController ()
 {
     float _systemVersion;
+    BOOL isStarted;
+    NSMutableArray *timeSeries;
+    double tmpAcceleration;
+    double tmpVelocity;
+    double currentVelocity;
+    double sumDistance;
 }
+@property (retain, nonatomic) IBOutlet UILabel *distance;
 @property (nonatomic, retain) CMMotionManager *manager;
 @end
 
@@ -58,20 +66,26 @@
     
     /* 各種センサーの利用開始(全てを動作させると非常に遅くなるので注意) */
     // CMAccelerometerDataの開始
-    [self startCMAccelerometerData:frequency];
+//    [self startCMAccelerometerData:frequency];
     
     // CMGyroDataの開始
     [self startCMGyroData:frequency];
     
     // CMMagnetometerDataの開始
-    [self startCMMagnetometerData:frequency];
+//    [self startCMMagnetometerData:frequency];
     
     // CMDeviceMotionの開始
-    [self startCMDeviceMotion:frequency];
+//    [self startCMDeviceMotion:frequency];
+    
+    isStarted = NO;
+    sumDistance = 0;
+    tmpVelocity = 0;
+    currentVelocity = 0;
+    
 }
-
 - (void)viewDidUnload
 {
+    [self setDistance:nil];
     [super viewDidUnload];
     
     // 各種センサーの利用停止
@@ -151,6 +165,7 @@
     [_deviceMotionAttitudePitch release];
     [_deviceMotionAttitudeYaw release];
     
+    [_distance release];
     [super dealloc];
 }
 
@@ -179,6 +194,13 @@
         [self.manager startAccelerometerUpdatesToQueue:[NSOperationQueue currentQueue] withHandler:handler];
     }
 }
+- (IBAction)startSampling:(id)sender {
+    if (isStarted) {
+        isStarted =NO;
+    }else{
+        isStarted = YES;
+    }
+}
 
 - (void)startCMGyroData:(int)frequency
 {
@@ -187,15 +209,40 @@
         // 更新間隔の指定
         self.manager.gyroUpdateInterval = 1 / frequency;  // 秒
         // ハンドラ
-        CMGyroHandler handler = ^(CMGyroData *data, NSError *error) {
-            // double timestamp = data.timestamp;
-            self.gyroDataXLabel.text = [NSString stringWithFormat:@"%lf", data.rotationRate.x];
-            self.gyroDataYLabel.text = [NSString stringWithFormat:@"%lf", data.rotationRate.y];
-            self.gyroDataZLabel.text = [NSString stringWithFormat:@"%lf", data.rotationRate.z];
+        CMDeviceMotionHandler handler=^(CMDeviceMotion *motion,NSError *error)
+        {
+            //ユーザー加速度の水平方向の大きさを算出
+            double magnitude =[self gravityDirectionMagnitudeForMotion:motion];
+            //算出したユーザー加速度の重力方向の大きさからスクワットの動きを判定
+            currentVelocity = [IntegralCalc integralC:tmpAcceleration :magnitude :frequency];
+            sumDistance += [IntegralCalc integralC:tmpVelocity :currentVelocity :frequency];
+            tmpVelocity = currentVelocity;
+            tmpAcceleration = magnitude;
+            self.distance.text = [NSString stringWithFormat:@"%lf",sumDistance];
+            
         };
+        
         // センサーの利用開始
-        [self.manager startGyroUpdatesToQueue:[NSOperationQueue currentQueue] withHandler:handler];
+        [self.manager startDeviceMotionUpdatesToQueue:[NSOperationQueue currentQueue] withHandler:handler];
     }
+}
+
+-(double)gravityDirectionMagnitudeForMotion:(CMDeviceMotion*)motion
+{
+    //ユーザー加速度の測定値を取得
+    CMAcceleration user = motion.userAcceleration;
+    //重力加速度の測定値を取得
+    CMAcceleration gravity = motion.gravity;
+    
+    //ユーザーか速度の大きさを算出
+    double magnitude = sqrt(pow(user.x,2)+pow(user.y, 2)+pow(user.z, 2));
+    
+    //ユーザー加速度のベクトルと重力加速度のベクトルのなす角θのcosθを算出
+    double cosT = (user.x*gravity.x+user.y*gravity.y+user.z*gravity.z)/sqrt((pow(user.x, 2)+pow(user.y, 2)+pow(user.z, 2))*(pow(user.x, 2)+pow(user.y, 2)+pow(user.z, 2)));
+    //ユーザーの加速度の大きさにsinθを乗算してユーザー加速度の水平方向における大きさを計算
+    double gravityDirectionMagnitude = round(magnitude*sqrt(1-pow(cosT, 2))*100)/100;
+    
+    return gravityDirectionMagnitude;
 }
 
 - (void)startCMMagnetometerData:(int)frequency

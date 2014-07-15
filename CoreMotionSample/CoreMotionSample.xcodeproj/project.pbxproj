@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C2AE8E6319735D4400DF4D97 /* IntegralCalc.m in Sources */ = {isa = PBXBuildFile; fileRef = C2AE8E6219735D4400DF4D97 /* IntegralCalc.m */; };
 		CEBFCA7B1563878A00A67BA5 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEBFCA7A1563878A00A67BA5 /* UIKit.framework */; };
 		CEBFCA7D1563878A00A67BA5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEBFCA7C1563878A00A67BA5 /* Foundation.framework */; };
 		CEBFCA7F1563878A00A67BA5 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEBFCA7E1563878A00A67BA5 /* CoreGraphics.framework */; };
@@ -20,6 +21,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C2AE8E6119735D4400DF4D97 /* IntegralCalc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntegralCalc.h; sourceTree = "<group>"; };
+		C2AE8E6219735D4400DF4D97 /* IntegralCalc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IntegralCalc.m; sourceTree = "<group>"; };
 		CEBFCA761563878A00A67BA5 /* CoreMotionSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CoreMotionSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CEBFCA7A1563878A00A67BA5 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		CEBFCA7C1563878A00A67BA5 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -90,6 +93,8 @@
 				CEBFCA8F1563878A00A67BA5 /* ViewController_iPhone.xib */,
 				CEBFCA921563878A00A67BA5 /* ViewController_iPad.xib */,
 				CEBFCA811563878A00A67BA5 /* Supporting Files */,
+				C2AE8E6119735D4400DF4D97 /* IntegralCalc.h */,
+				C2AE8E6219735D4400DF4D97 /* IntegralCalc.m */,
 			);
 			path = CoreMotionSample;
 			sourceTree = "<group>";
@@ -171,6 +176,7 @@
 			files = (
 				CEBFCA871563878A00A67BA5 /* main.m in Sources */,
 				CEBFCA8B1563878A00A67BA5 /* AppDelegate.m in Sources */,
+				C2AE8E6319735D4400DF4D97 /* IntegralCalc.m in Sources */,
 				CEBFCA8E1563878A00A67BA5 /* ViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
